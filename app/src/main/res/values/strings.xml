@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Login_EX</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_sigh_up1">SighUp1Activity</string>
+    <string name="title_activity_real_main">RealMainActivity</string>
+</resources>
