@@ -95,6 +95,20 @@
             android:textColor="#204A2E"
             android:textSize="15sp" />
 
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/im"
+            android:layout_width="300sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="임시"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            />
+
+
         <ImageButton
             android:id="@+id/login_button_google"
             android:background="@drawable/google"

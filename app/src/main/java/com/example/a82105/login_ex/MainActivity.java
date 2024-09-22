@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     MaterialEditText edt_email, edt_password;
-    MaterialButton btn_register, btn_login;
+    MaterialButton btn_register, btn_login, btn_next;
 
     @Override
     protected void onStop() {
@@ -61,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), SighUp1Activity.class);
             startActivity(intent);
         });
+
+
+        btn_next = findViewById(R.id.im);
+
+        btn_next.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), RealMainActivity.class);
+            startActivity(intent);
+        });
+
+
+
     }
 
     private void loginUser(String email, String password) {

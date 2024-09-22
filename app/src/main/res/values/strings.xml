@@ -6,4 +6,8 @@
 
     <string name="title_activity_sigh_up1">SighUp1Activity</string>
     <string name="title_activity_real_main">RealMainActivity</string>
+    <string name="heart">하트</string>
+    <string name="home">홈</string>
+    <string name="mypage">마이페이지</string>
+
 </resources>
