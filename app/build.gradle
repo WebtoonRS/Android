@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android' // Kotlin 플러그인 추가
 
 android {
     namespace 'com.example.a82105.login_ex'
@@ -19,6 +20,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    // KotlinOptions 추가
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -31,8 +37,6 @@ android {
             debuggable true
         }
     }
-
-
 }
 
 dependencies {
@@ -41,7 +45,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-//추가된 부분
+    // 추가된 부분
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation "androidx.vectordrawable:vectordrawable:1.1.0"
     implementation "androidx.vectordrawable:vectordrawable-animated:1.1.0"
@@ -54,36 +58,33 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-//RXJava (최신 버전으로 업데이트 권장)
+    // RXJava (최신 버전으로 업데이트 권장)
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
-//Retrofit2 (최신 버전으로 업데이트 권장)
+    // Retrofit2 (최신 버전으로 업데이트 권장)
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
-//Glide 추가된 부분
+    // Glide 추가된 부분
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
 
-//Material Edit Text
+    // Material Edit Text
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
 
-//Material Dialog
+    // Material Dialog
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 
-//Material Button (중복 제거)
+    // Material Button (중복 제거)
     implementation 'com.google.android.material:material:1.9.0'
 
-//Gson
+    // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-//Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-
-
-
+    // Kotlin 최신 버전 (2.0.21)
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21"
 }

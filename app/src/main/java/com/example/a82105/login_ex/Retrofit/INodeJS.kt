@@ -1,102 +1,72 @@
-package com.example.a82105.login_ex.Retrofit;
+package com.example.a82105.login_ex.Retrofit
 
-import io.reactivex.Observable;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.POST;
-import java.util.List;
-import retrofit2.http.Body;
+import android.os.Parcel
+import android.os.Parcelable
+import android.os.Parcelable.Creator
+import io.reactivex.Observable
+import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.POST
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-
-public interface INodeJS {
+interface INodeJS {
     @POST("api/auth/register")
     @FormUrlEncoded
-    Observable<String> registerUser(@Field("email") String email, @Field("password") String password, @Field("name") String name);
+    fun registerUser(
+        @Field("email") email: String?,
+        @Field("password") password: String?,
+        @Field("name") name: String?
+    ): Observable<String?>?
 
     @POST("api/auth/login")
     @FormUrlEncoded
-    Observable<String> loginUser(@Field("email") String email, @Field("password") String password);
-
+    fun loginUser(
+        @Field("email") email: String?,
+        @Field("password") password: String?
+    ): Observable<String?>?
 
 
     // 장르에 따른 웹툰 가져오는 메서드
     @POST("api/recommend/get_webtoons")
-    Observable<List<Webtoon>> getWebtoonsByGenre(@Body GenreRequest genreRequest);
-
+    fun getWebtoonsByGenre(@Body genreRequest: GenreRequest?): Observable<List<Webtoon?>?>?
 
 
     // 요청 클래스
-    class GenreRequest {
+    class GenreRequest(var genre: String)
 
-        private String genre;
+    class Webtoon : Parcelable {
+        var title: String?
+        var thumbnail_link: String?
 
-        public GenreRequest(String genre) {
-            this.genre = genre;
+        constructor(title: String?, thumbnail_link: String?) {
+            this.title = title
+            this.thumbnail_link = thumbnail_link
         }
 
-        public String getGenre() {
-            return genre;
+        protected constructor(`in`: Parcel) {
+            title = `in`.readString()
+            thumbnail_link = `in`.readString()
         }
 
-        public void setGenre(String genre) {
-            this.genre = genre;
-        }
-    }
-
-    public class Webtoon implements Parcelable {
-        String title;
-        String thumbnail_link;
-
-        public Webtoon(String title, String thumbnail_link) {
-            this.title = title;
-            this.thumbnail_link = thumbnail_link;
+        override fun describeContents(): Int {
+            return 0
         }
 
-        protected Webtoon(Parcel in) {
-            title = in.readString();
-            thumbnail_link = in.readString();
+        override fun writeToParcel(dest: Parcel, flags: Int) {
+            dest.writeString(title)
+            dest.writeString(thumbnail_link)
         }
 
-        public static final Creator<Webtoon> CREATOR = new Creator<Webtoon>() {
-            @Override
-            public Webtoon createFromParcel(Parcel in) {
-                return new Webtoon(in);
+        companion object {
+            val CREATOR: Creator<Webtoon> = object : Creator<Webtoon?> {
+                override fun createFromParcel(`in`: Parcel): Webtoon? {
+                    return Webtoon(`in`)
+                }
+
+                override fun newArray(size: Int): Array<Webtoon?> {
+                    return arrayOfNulls(size)
+                }
             }
-
-            @Override
-            public Webtoon[] newArray(int size) {
-                return new Webtoon[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(title);
-            dest.writeString(thumbnail_link);
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getThumbnail_link() {
-            return thumbnail_link;
-        }
-
-        public void setThumbnail_link(String thumbnail_link) {
-            this.thumbnail_link = thumbnail_link;
         }
     }
 }
