@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 
 class HomeFragment : Fragment() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 초기 설정이 필요하다면 여기에 추가
@@ -21,17 +22,18 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         // SearchView 초기화
-        val searchView = view.findViewById<SearchView>(R.id.search_view)
-
+        val searchView: SearchView = view.findViewById(R.id.search_view)
 
         // SearchView에 QueryTextListener 추가
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchWebtoon(query) // 입력된 텍스트를 이용해 검색 수행
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    searchWebtoon(it) // 입력된 텍스트를 이용해 검색 수행
+                }
                 return false
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
+            override fun onQueryTextChange(newText: String?): Boolean {
                 // 텍스트 변경 중 처리할 내용이 있으면 여기에 작성
                 return false
             }
@@ -40,7 +42,7 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    //  검색 메서드 (추가로 구현 필요)
+    // 검색 메서드 (추가로 구현 필요)
     private fun searchWebtoon(query: String) {
         // 검색 로직을 여기에 구현 (API 호출 또는 데이터 필터링 등)
     }

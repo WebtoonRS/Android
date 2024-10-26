@@ -9,6 +9,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface INodeJS {
+
     @POST("api/auth/register")
     @FormUrlEncoded
     fun registerUser(
@@ -29,18 +30,16 @@ interface INodeJS {
     fun getWebtoonsByGenre(@Body genreRequest: GenreRequest): Observable<List<Webtoon>>
 
     // 요청 클래스
-    data class GenreRequest(
-        var genre: String
-    )
+    data class GenreRequest(val genre: String)
 
-    // Webtoon 클래스
+    // 웹툰 클래스
     data class Webtoon(
-        var title: String?,
-        var thumbnail_link: String?
+        val title: String,
+        val thumbnail_link: String
     ) : Parcelable {
         constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString()
+            parcel.readString() ?: "",
+            parcel.readString() ?: ""
         )
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -48,7 +47,9 @@ interface INodeJS {
             parcel.writeString(thumbnail_link)
         }
 
-        override fun describeContents(): Int = 0
+        override fun describeContents(): Int {
+            return 0
+        }
 
         companion object CREATOR : Parcelable.Creator<Webtoon> {
             override fun createFromParcel(parcel: Parcel): Webtoon {

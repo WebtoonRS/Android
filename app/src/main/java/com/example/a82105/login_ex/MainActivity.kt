@@ -16,13 +16,13 @@ import retrofit2.Retrofit
 class MainActivity : AppCompatActivity() {
 
     private lateinit var myAPI: INodeJS
-    private var compositeDisposable = CompositeDisposable()
+    private val compositeDisposable = CompositeDisposable()
 
-    private lateinit var edt_email: MaterialEditText
-    private lateinit var edt_password: MaterialEditText
-    private lateinit var btn_register: MaterialButton
-    private lateinit var btn_login: MaterialButton
-    private lateinit var btn_next: MaterialButton
+    private lateinit var edtEmail: MaterialEditText
+    private lateinit var edtPassword: MaterialEditText
+    private lateinit var btnRegister: MaterialButton
+    private lateinit var btnLogin: MaterialButton
+    private lateinit var btnNext: MaterialButton
 
     override fun onStop() {
         compositeDisposable.clear()
@@ -39,55 +39,56 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Init API
-        val retrofit: Retrofit = RetrofitClient.instance!!
+        val retrofit: Retrofit = RetrofitClient.getInstance()
         myAPI = retrofit.create(INodeJS::class.java)
 
         // View 초기화
-        btn_login = findViewById(R.id.login_button)
-        btn_register = findViewById(R.id.register_button)
-        edt_email = findViewById(R.id.edt_email)
-        edt_password = findViewById(R.id.edt_password)
-        btn_next = findViewById(R.id.im)
+        btnLogin = findViewById(R.id.login_button)
+        btnRegister = findViewById(R.id.register_button)
+        edtEmail = findViewById(R.id.edt_email)
+        edtPassword = findViewById(R.id.edt_password)
+        btnNext = findViewById(R.id.im)
 
-        // 이벤트 처리
-        btn_login.setOnClickListener {
-            loginUser(edt_email.text.toString(), edt_password.text.toString())
+        // 이벤트 설정
+        btnLogin.setOnClickListener {
+            val email = edtEmail.text.toString()
+            val password = edtPassword.text.toString()
+
+            // 입력 값 체크
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please enter your email and password", Toast.LENGTH_SHORT).show()
+            } else {
+                loginUser(email, password)
+            }
         }
 
-        btn_register.setOnClickListener {
+        btnRegister.setOnClickListener {
             val intent = Intent(applicationContext, SighUp1Activity::class.java)
             startActivity(intent)
         }
 
-        btn_next.setOnClickListener {
+        btnNext.setOnClickListener {
             val intent = Intent(applicationContext, RealMainActivity::class.java)
             startActivity(intent)
         }
     }
 
     private fun loginUser(email: String, password: String) {
-        myAPI?.loginUser(email, password)
-            ?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe(
-                { s ->
-                    s?.let {
-                        if (it.contains("encrypted_password")) {
-                            Toast.makeText(this@MainActivity, "Login Success", Toast.LENGTH_SHORT)
-                                .show()
-                        } else {
-                            Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
-                        }
+        compositeDisposable.add(
+            myAPI.loginUser(email, password)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ response ->
+                    if (response.contains("encrypted_password")) {
+                        Toast.makeText(this@MainActivity, "Login Success", Toast.LENGTH_SHORT).show()
+                        // 로그인 성공 후 처리 추가 가능
+                    } else {
+                        Toast.makeText(this@MainActivity, response, Toast.LENGTH_SHORT).show()
                     }
-                },
-                { throwable ->
-                    // 오류 처리
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Error: ${throwable.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )?.let { compositeDisposable.add(it) }
+                }, { throwable ->
+                    Toast.makeText(this@MainActivity, "Login failed: ${throwable.message}", Toast.LENGTH_SHORT).show()
+                    // 에러 처리
+                })
+        )
     }
 }
