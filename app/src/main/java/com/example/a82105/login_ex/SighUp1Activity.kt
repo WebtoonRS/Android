@@ -37,45 +37,42 @@ class SighUp1Activity : AppCompatActivity() {
         setContentView(R.layout.activity_sigh_up1)
 
         // Init API
-        val retrofit = RetrofitClient.getInstance()
-        myAPI = retrofit.create(INodeJS::class.java)
+        val retrofit = RetrofitClient.instance  // 수정된 부분
+        myAPI = retrofit?.create(INodeJS::class.java)
 
         // View
         btn_register_M = findViewById(R.id.register_button_M)
-
         R_edt_email = findViewById(R.id.R_edt_email)
         R_edt_password = findViewById(R.id.R_edt_password)
         R_edt_name = findViewById(R.id.R_edt_name)
 
-
         // Event
-        btn_register_M.setOnClickListener(View.OnClickListener { view: View? ->
+        btn_register_M?.setOnClickListener { view: View? ->
             registerUser(
-                R_edt_email.getText().toString(),
-                R_edt_password.getText().toString(),
-                R_edt_name.getText().toString()
+                R_edt_email?.text.toString(),
+                R_edt_password?.text.toString(),
+                R_edt_name?.text.toString()
             )
-        })
+        }
     }
 
     private fun registerUser(email: String, password: String, name: String) {
-        compositeDisposable.add(
-            myAPI!!.registerUser(email, password, name)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ s: String? ->
-                    // 화면 전환 코드 추가
-                    val intent = Intent(this@SighUp1Activity, RegistActivity::class.java)
-                    intent.putExtra("response", s) // 응답 데이터를 전달하고 싶을 경우
-                    startActivity(intent)
-                }, { throwable: Throwable ->
-                    // 에러 처리
-                    Toast.makeText(
-                        this@SighUp1Activity,
-                        "Error: " + throwable.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                })
-        )
+        // Nullable 처리 추가
+        myAPI?.registerUser(email, password, name)
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({ s: String? ->
+                // 화면 전환 코드 추가
+                val intent = Intent(this@SighUp1Activity, RegistActivity::class.java)
+                intent.putExtra("response", s) // 응답 데이터를 전달하고 싶을 경우
+                startActivity(intent)
+            }, { throwable: Throwable ->
+                // 에러 처리
+                Toast.makeText(
+                    this@SighUp1Activity,
+                    "Error: ${throwable.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            })?.let { compositeDisposable.add(it) }  // nullable 처리 후 compositeDisposable에 추가
     }
 }

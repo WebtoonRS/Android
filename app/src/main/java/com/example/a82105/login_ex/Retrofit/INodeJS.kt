@@ -12,59 +12,51 @@ interface INodeJS {
     @POST("api/auth/register")
     @FormUrlEncoded
     fun registerUser(
-        @Field("email") email: String?,
-        @Field("password") password: String?,
-        @Field("name") name: String?
-    ): Observable<String?>?
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Field("name") name: String
+    ): Observable<String>
 
     @POST("api/auth/login")
     @FormUrlEncoded
     fun loginUser(
-        @Field("email") email: String?,
-        @Field("password") password: String?
-    ): Observable<String?>?
-
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): Observable<String>
 
     // 장르에 따른 웹툰 가져오는 메서드
     @POST("api/recommend/get_webtoons")
-    fun getWebtoonsByGenre(@Body genreRequest: GenreRequest?): Observable<List<Webtoon?>?>?
-
+    fun getWebtoonsByGenre(@Body genreRequest: GenreRequest): Observable<List<Webtoon>>
 
     // 요청 클래스
-    class GenreRequest(var genre: String)
+    data class GenreRequest(
+        var genre: String
+    )
 
-    class Webtoon : Parcelable {
-        var title: String?
+    // Webtoon 클래스
+    data class Webtoon(
+        var title: String?,
         var thumbnail_link: String?
+    ) : Parcelable {
+        constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString()
+        )
 
-        constructor(title: String?, thumbnail_link: String?) {
-            this.title = title
-            this.thumbnail_link = thumbnail_link
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(title)
+            parcel.writeString(thumbnail_link)
         }
 
-        protected constructor(`in`: Parcel) {
-            title = `in`.readString()
-            thumbnail_link = `in`.readString()
-        }
+        override fun describeContents(): Int = 0
 
-        override fun describeContents(): Int {
-            return 0
-        }
+        companion object CREATOR : Parcelable.Creator<Webtoon> {
+            override fun createFromParcel(parcel: Parcel): Webtoon {
+                return Webtoon(parcel)
+            }
 
-        override fun writeToParcel(dest: Parcel, flags: Int) {
-            dest.writeString(title)
-            dest.writeString(thumbnail_link)
-        }
-
-        companion object {
-            val CREATOR: Parcelable.Creator<Webtoon> = object : Parcelable.Creator<Webtoon?> {
-                override fun createFromParcel(`in`: Parcel): Webtoon? {
-                    return Webtoon(`in`)
-                }
-
-                override fun newArray(size: Int): Array<Webtoon?> {
-                    return arrayOfNulls(size)
-                }
+            override fun newArray(size: Int): Array<Webtoon?> {
+                return arrayOfNulls(size)
             }
         }
     }

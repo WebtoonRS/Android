@@ -22,7 +22,7 @@ class RealMainActivity : AppCompatActivity() {
             .commit()
 
         // 네비게이션 아이템 선택 리스너 설정
-        bottomNavigationView.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener { menuItem: MenuItem ->
+        bottomNavigationView?.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener { menuItem: MenuItem ->
             // 선택된 메뉴 항목에 따라 프래그먼트를 교체
             val itemId = menuItem.itemId
             if (itemId == R.id.bottom_home) {

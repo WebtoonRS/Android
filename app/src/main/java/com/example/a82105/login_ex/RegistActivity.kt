@@ -21,10 +21,11 @@ class RegistActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_regist)
 
-        val retrofit = RetrofitClient.getInstance()
+        // RetrofitClient.instance로 수정
+        val retrofit = RetrofitClient.instance!!
         myAPI = retrofit.create(INodeJS::class.java)
 
-
+        // 버튼 리스너 설정
         setGenreButtonListener(R.id.sectionramance, "로맨스")
         setGenreButtonListener(R.id.sectionfantasy, "판타지")
         setGenreButtonListener(R.id.sectionThriller, "스릴러")
@@ -34,30 +35,37 @@ class RegistActivity : AppCompatActivity() {
         setGenreButtonListener(R.id.sectionSports, "스포츠/액션")
     }
 
-
     private fun setGenreButtonListener(buttonId: Int, genre: String) {
         val button = findViewById<Button>(buttonId)
         button.setOnClickListener { v: View? ->
             val request = GenreRequest(genre)
-            compositeDisposable.add(
-                myAPI!!.getWebtoonsByGenre(request)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ webtoons: List<Webtoon?>? ->
-                        // 받은 웹툰 데이터를 다음 Fragment로 전달
-                        val fragment = RegistSelecViewFragment.newInstance(webtoons)
+
+            // nullable한 Observable을 안전하게 처리
+            myAPI?.getWebtoonsByGenre(request)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({ webtoons: List<Webtoon?>? ->
+                    // nullable한 Webtoon 객체들을 필터링하여 non-null 리스트로 변환
+                    val nonNullWebtoons = webtoons?.filterNotNull()
+
+                    // 받은 웹툰 데이터를 Fragment로 전달
+                    nonNullWebtoons?.let {
+                        val fragment = RegistSelecViewFragment.newInstance(it)
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, fragment)
                             .addToBackStack(null)
                             .commit()
-                    }, { throwable: Throwable ->
-                        Toast.makeText(
-                            this@RegistActivity,
-                            "Error: " + throwable.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    })
-            )
+                    } ?: run {
+                        Toast.makeText(this@RegistActivity, "웹툰 데이터를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }, { throwable: Throwable ->
+                    Toast.makeText(
+                        this@RegistActivity,
+                        "Error: ${throwable.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
+                ?.let { compositeDisposable.add(it) }  // nullable 처리 후 추가
         }
     }
 
@@ -71,4 +79,3 @@ class RegistActivity : AppCompatActivity() {
         super.onDestroy()
     }
 }
-
